@@ -5,7 +5,7 @@ int convertTemperature(int temp){
   return 1;
 }
 
-
+int i=0;
 void display(int d) {
   if (d >= 0 || d <= 9) {
     Serial.println("ciao");
@@ -55,13 +55,13 @@ void display(int d) {
       case 5:
             Serial.println("case 5");
 
-        digitalWrite(2, LOW);
+        digitalWrite(2, HIGH);
         digitalWrite(3, HIGH);
-        digitalWrite(4, LOW);
+        digitalWrite(4, HIGH);
         digitalWrite(5, HIGH);
-        digitalWrite(6, HIGH);
+        digitalWrite(6, LOW);
         digitalWrite(7, HIGH);
-        digitalWrite(8, HIGH);
+        digitalWrite(8, LOW);
         break;
       case 6:
         digitalWrite(2, HIGH);
@@ -148,18 +148,22 @@ pinMode(11,OUTPUT);
 
 digitalWrite(10,LOW); //PIN 5 CATHODE
 digitalWrite(11,LOW); //PIN 10 CATHODE
+
 }
 
 
 void loop() {
 
-display(1);
+display(i);
 digitalWrite(11,LOW); //set one digit to turned on
 digitalWrite(10,HIGH); //the other to turned off
-
-delay(10);
+i++;
+delay(400);
 digitalWrite(11,HIGH);
 digitalWrite(10,LOW);
-display(3);
-delay(10);
+
+display(i);
+delay(400);
+i++;
+if(i==10) i=0;
 }
