@@ -1,18 +1,88 @@
 long temperature = 0;
-int tempPin = A0;
-
-double convertTemperature(int sensor_Res)
+int tempPin = 0;
+const int switch1 = 12;
+int rightTemp = 0;
+int leftTemp = 0;
+int currentTemp = 0;
+int state = HIGH;
+void setup()
 {
-  // double voltage = (sensor_Res * 5.0) / 1024; //(5*temp)/1024 is to convert the 10 bit number to a voltage reading.
-  // double milliVolt = voltage * 1000;          //This is multiplied by 1000 to convert it to millivolt.
+  // pinMode(tempPin, INPUT); //temp
 
-  // double tempC = (milliVolt - 500) / 10; //For TMP36 sensor. Range(−40°C to +125°C)
+  pinMode(2, OUTPUT); //7 digit display
+  pinMode(3, OUTPUT); //7 digit display
+  pinMode(4, OUTPUT); //7 digit display
+  pinMode(5, OUTPUT); //7 digit display
+  pinMode(6, OUTPUT); //7 digit display
+  pinMode(7, OUTPUT); //7 digit display
+  pinMode(8, OUTPUT); //7 digit display
 
-  double tempC = sensor_Res * 1100 / (1024 * 10);
-  return tempC;
+  pinMode(10, OUTPUT); //7 digit display
+  pinMode(11, OUTPUT); //7 digit display
+
+  digitalWrite(10, LOW); //PIN 5 CATHODE
+  digitalWrite(11, LOW); //PIN 10 CATHODE
+
+  analogReference(INTERNAL);
+  pinMode(switch1, INPUT_PULLUP);
+  // put your setup code here, to run once:
+  Serial.begin(9600);
 }
 
-int i = 0;
+int getTemp(){
+  int currentTemp = analogRead(tempPin);
+  currentTemp = (5.0 * currentTemp * 100.0)/1024.0;
+  if(firstRead){
+    maxTemp = currentTemp;
+    firstRead = 0;
+  }
+  return currentTemp;
+}
+
+void show(int left, int right){
+  if(left == 0){
+    showRight();
+    display(right);
+  } else {
+      showRight();
+      display(right);
+      delay(10);
+      showLeft();
+      display(left);
+      delay(10);
+  }
+}
+
+void showLeft(){
+  digitalWrite(10, LOW);
+  digitalWrite(11, HIGH);
+}
+
+void showRight(){
+  digitalWrite(11, HIGH);
+  digitalWrite(10, LOW);
+
+}
+
+void loop(){
+  state = digitalRead(switch1);
+  currentTemp = getTemp();
+    if(currentTemp > maxTemp){
+      maxTemp = currentTemp;
+    }
+    rightTemp = currentTemp % 10;
+    leftTemp = currentTemp / 10;
+
+  if(state == HIGH){
+
+    show(leftTemp, rightTemp);
+  }else{
+    int maxLeft = maxTemp / 10;
+    int maxRight = maxTemp % 10;
+    show(maxLeft, maxRight);
+  }
+
+
 void display(int d)
 {
   if (d >= 0 || d <= 9)
@@ -125,48 +195,3 @@ void display(int d)
   }
 }
 
-void setup()
-{
-  // put your setup code here, to run once:
-  Serial.begin(9600);
-
-  // pinMode(tempPin, INPUT); //temp
-
-  pinMode(2, OUTPUT); //7 digit display
-  pinMode(3, OUTPUT); //7 digit display
-  pinMode(4, OUTPUT); //7 digit display
-  pinMode(5, OUTPUT); //7 digit display
-  pinMode(6, OUTPUT); //7 digit display
-  pinMode(7, OUTPUT); //7 digit display
-  pinMode(8, OUTPUT); //7 digit display
-
-  pinMode(10, OUTPUT); //7 digit display
-  pinMode(11, OUTPUT); //7 digit display
-
-  digitalWrite(10, LOW); //PIN 5 CATHODE
-  digitalWrite(11, LOW); //PIN 10 CATHODE
-}
-
-void loop()
-{
-  // int sensor_Res = analogRead(tempPin);
-  double tempC = analogRead(tempPin);
-  tempC = tempC * 0.48828125;
-  Serial.println(tempC);
-
-  delay(1000);
-
-  // display(i);
-  // digitalWrite(11, LOW);  //set one digit to turned on
-  // digitalWrite(10, HIGH); //the other to turned off
-  // i++;
-  // delay(400);
-  // digitalWrite(11, HIGH);
-  // digitalWrite(10, LOW);
-
-  // display(i);
-  // delay(400);
-  // i++;
-  // if (i == 10)
-  //   i = 0;
-}
