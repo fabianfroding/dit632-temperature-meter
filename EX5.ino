@@ -5,6 +5,8 @@ int rightTemp = 0;
 int leftTemp = 0;
 int currentTemp = 0;
 int state = HIGH;
+int firstRead = 1;
+int maxTemp = 0;
 void setup()
 {
   // pinMode(tempPin, INPUT); //temp
@@ -23,7 +25,6 @@ void setup()
   digitalWrite(10, LOW); //PIN 5 CATHODE
   digitalWrite(11, LOW); //PIN 10 CATHODE
 
-  analogReference(INTERNAL);
   pinMode(switch1, INPUT_PULLUP);
   // put your setup code here, to run once:
   Serial.begin(9600);
@@ -81,6 +82,7 @@ void loop(){
     int maxRight = maxTemp % 10;
     show(maxLeft, maxRight);
   }
+}
 
 
 void display(int d)
